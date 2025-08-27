@@ -208,6 +208,13 @@ process_patient() {
 
     log_msg "Processing $file for patient $patient"                                                       # Log patient processing start
 
+    local biascorr="$outdir/${patient}_biascorr.nii.gz"                                                   # Paths for intermediate files
+    local iso="$outdir/${patient}_iso.nii.gz" 
+    local bet="$outdir/${patient}_bet.nii.gz"
+    local bet2std="$outdir/${patient}_bet2std.nii.gz"
+    local mat="$outdir/${patient}_bet2std.mat"
+
+
     bias_correct "$file" "$outdir/${patient}_biascorr.nii.gz"                                             # Bias correction
     resample_iso "$biascorr" "$outdir/${patient}_iso.nii.gz"                                              # Resample to isotropic
     brain_extract "$iso" "$outdir/${patient}_bet.nii.gz"                                                  # Brain extraction

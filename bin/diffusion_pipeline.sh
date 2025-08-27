@@ -16,3 +16,25 @@ log_msg "Starting structural_pipeline"                              # Log start 
 
 # ---------------------------
 # FUNCTIONS
+
+
+# ---------------------------
+# PIPELINE STEPS
+
+process_patient() {
+    local file="$1" 
+local patient=$(basename "$file" | cut -d'_' -f1)                  # Extract patient ID from filename
+    local outdir="$DERIVATIVES/$patient"                           # Output directory for patient
+    mkdir -p "$outdir"                                             # Create output directory
+
+    log_msg "Processing $file for patient $patient"                # Log patient processing start  
+}
+
+# ---------------------------
+# MAIN LOOP
+
+for file in "$RAW_DATA"/meningioma_raw_data/*.nii.gz; do
+    process_patient "$file" # Process each patient's data sequentially
+done
+
+log_msg "structural_pipeline finished" # Log completion of pipeline
