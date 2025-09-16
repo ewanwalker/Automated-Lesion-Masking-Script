@@ -9,13 +9,30 @@ set +a                           # Stop automatically exporting variables
 
 # ---------------------------
 # USER AND LOGGING SETUP
-LOGFILE="$LOG_DIR/structural_pipeline_$(date '+%Y%m%d_%H%M%S').log" # Create log file with timestamp
+LOGFILE="$LOG_DIR/diffusion_pipeline_$(date '+%Y%m%d_%H%M%S').log" # Create log file with timestamp
 exec > >(tee -a "$LOGFILE") 2>&1                                    # Redirect stdout and stderr to log file and terminal
 log_msg() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }             # Function for timestamped logging
 log_msg "Starting structural_pipeline"                              # Log start of pipeline
 
 # ---------------------------
 # FUNCTIONS
+convert_mask_mif() { 
+    local patient="$1" 
+    if [[ ! -e "${DERIVATIVES}/${patient}_dwi.mif" ]]; then 
+        mrconvert \
+			-fslgrad \
+				${RAW_DATA}/${patient}_dir-AP_dwi.bvec \
+				${RAW_DATA}/${patient}_dir-AP_dwi.bval \
+			${RAW_DATA}/${patient}_dir-AP_dwi.nii.gz \
+			${DERIVATIVES}/${patient}_dwi.mif # Convert mask to .mif format
+        log_msg "Mask converted: ${DERIVATIVES}/${patient}_dwi.mif" 
+    else
+        log_msg "Mask already exists: ${DERIVATIVES}/${patient}_dwi.mif" 
+    fi
+}
+
+
+
 
 
 # ---------------------------
@@ -23,9 +40,14 @@ log_msg "Starting structural_pipeline"                              # Log start 
 
 process_patient() {
     local file="$1" 
-local patient=$(basename "$file" | cut -d'_' -f1)                  # Extract patient ID from filename
+    local patient=$(basename "$file" | cut -d'_' -f1)              # Extract patient ID from filename
     local outdir="$DERIVATIVES/$patient"                           # Output directory for patient
     mkdir -p "$outdir"                                             # Create output directory
+
+
+    convert_mask_mif "$patient"                                    # Convert mask to .mif format
+
+
 
     log_msg "Processing $file for patient $patient"                # Log patient processing start  
 }

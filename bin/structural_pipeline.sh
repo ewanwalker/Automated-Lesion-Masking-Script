@@ -119,8 +119,6 @@ mask_meningioma() {
 
 run_lesion_tractography() {
     local identifier="$1"
-
-    # Define paths based on config variables
     local roi_nii="${DERIVATIVES}/${identifier}/${TRACT_SEED_MASK}"
     local roi_nifti="${DERIVATIVES}/${identifier}/${identifier}_space-temp_roi.nii.gz"
     local roi_mif="${DERIVATIVES}/${identifier}/${identifier}_space-temp_roi.mif"
@@ -199,7 +197,6 @@ run_lesion_tractography() {
 
 # ---------------------------
 # Pipeline per patient
-# ---------------------------
 process_patient() {
     local file="$1" 
     local patient=$(basename "$file" | cut -d'_' -f1)                                                     # Extract patient ID from filename
@@ -225,7 +222,6 @@ process_patient() {
 
 # ---------------------------
 # Run pipeline for all patients
-# ---------------------------
 for file in "$RAW_DATA"/meningioma_raw_data/*.nii.gz; do
     process_patient "$file" # Process each patient's data sequentially
 done
