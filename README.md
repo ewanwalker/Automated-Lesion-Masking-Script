@@ -1,5 +1,7 @@
 # Automated-Lesion-Masking-Script
 
+Dissertation: available https://ewanswalker.co.uk/HTML/dissertation.html
+
 Dependancies:
 1. MRtrix3
 2. FSL
